@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflexão Multiplica SP</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:url('capamult.png') center center no-repeat;
+background-size:cover;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(255,255,255,.55);
+backdrop-filter:blur(4px);
+}
+
+.card{
+position:relative;
+z-index:2;
+width:100%;
+max-width:900px;
+background:rgba(255,255,255,.96);
+border-radius:25px;
+padding:35px;
+box-shadow:0 15px 40px rgba(0,0,0,.2);
+animation:entrada .6s ease;
+}
+
+@keyframes entrada{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+h1{
+text-align:center;
+color:#1c4c96;
+margin-bottom:10px;
+}
+
+.subtitulo{
+text-align:center;
+margin-bottom:30px;
+color:#555;
+}
+
+label{
+display:block;
+font-weight:bold;
+margin-bottom:8px;
+color:#1c4c96;
+}
+
+input,
+select,
+textarea{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:2px solid #d8e4f7;
+font-size:16px;
+margin-bottom:18px;
+}
+
+textarea{
+height:240px;
+resize:vertical;
+}
+
+.barra{
+height:18px;
+background:#ddd;
+border-radius:50px;
+overflow:hidden;
+margin-bottom:25px;
+}
+
+.progresso{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#1c4c96,#e53935);
+transition:.3s;
+}
+
+.contador{
+text-align:right;
+font-size:14px;
+color:#666;
+margin-top:-10px;
+margin-bottom:20px;
+}
+
+.botao{
+width:100%;
+padding:16px;
+border:none;
+border-radius:12px;
+background:#1c4c96;
+color:white;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.botao:hover{
+transform:scale(1.02);
+}
+
+#sucesso{
+display:none;
+text-align:center;
+}
+
+#sucesso h2{
+font-size:2rem;
+color:#2e7d32;
+margin-bottom:15px;
+}
+
+#sucesso p{
+font-size:1.1rem;
+}
+
+.pergunta{
+background:#f5f8fd;
+padding:20px;
+border-radius:12px;
+border-left:6px solid #1c4c96;
+margin-bottom:20px;
+line-height:1.6;
+font-size:18px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="card">
+
+<div id="formulario">
+
+<h1>🎯 Missão de Reflexão</h1>
+
+<p class="subtitulo">
+Registre sua análise sobre a questão proposta.
+</p>
+
+<div class="barra">
+<div class="progresso" id="barra"></div>
+</div>
+
+<label>Nome completo</label>
+<input type="text" id="nome">
+
+<label>Turma</label>
+<select id="turma">
+<option value="">Selecione...</option>
+<option>Quinta 17h25</option>
+<option>Sexta 17h00</option>
+</select>
+
+<div class="pergunta">
+Você concorda ou discorda que as dificuldades dos alunos na interpretação de climogramas estão mais relacionadas à metodologia utilizada do que à complexidade do conteúdo? Justifique.
+</div>
+
+<label>Sua resposta</label>
+
+<textarea id="resposta" placeholder="Digite sua justificativa aqui..."></textarea>
+
+<div class="contador">
+<span id="contador">0</span> caracteres
+</div>
+
+<button class="botao" onclick="enviarResposta()">
+🚀 Enviar Reflexão
+</button>
+
+</div>
+
+<div id="sucesso">
+
+<h2>🎉 Resposta enviada!</h2>
+
+<p>
+Sua contribuição foi registrada com sucesso.<br><br>
+Obrigado pela participação.
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbwLMPl4erZbFM-Dz8oAlIiumBr-SyAwvX_3f3qWCO99cPe_wn7GB6UT3PA1lGFHmLef/exec";
+
+const texto = document.getElementById("resposta");
+
+texto.addEventListener("input",()=>{
+
+const qtd = texto.value.length;
+
+document.getElementById("contador").innerText=qtd;
+
+const progresso=Math.min((qtd/300)*100,100);
+
+document.getElementById("barra").style.width=progresso+"%";
+
+});
+
+function enviarResposta(){
+
+const nome=document.getElementById("nome").value.trim();
+const turma=document.getElementById("turma").value;
+const resposta=document.getElementById("resposta").value.trim();
+
+if(nome===""){
+alert("Digite seu nome.");
+return;
+}
+
+if(turma===""){
+alert("Selecione sua turma.");
+return;
+}
+
+if(resposta.length<80){
+alert("Escreva uma justificativa mais completa.");
+return;
+}
+
+const dados={
+nome:nome,
+turma:turma,
+resposta:resposta
+};
+
+fetch(SCRIPT_URL,{
+method:"POST",
+mode:"no-cors",
+headers:{
+"Content-Type":"text/plain"
+},
+body:JSON.stringify(dados)
+})
+.then(()=>{
+mostrarSucesso();
+})
+.catch(()=>{
+mostrarSucesso();
+});
+
+}
+
+function mostrarSucesso(){
+
+document.getElementById("formulario").style.display="none";
+document.getElementById("sucesso").style.display="block";
+
+}
+
+</script>
+
+</body>
+</html>
