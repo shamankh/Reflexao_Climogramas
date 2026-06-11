@@ -71,8 +71,9 @@ button:disabled{background:#888;cursor:not-allowed}
 </div>
 
 <script>
-// Novo link executável atualizado
-const URL="https://script.google.com/macros/s/AKfycbxN1C7uNHvsMhebcT0uiagB3kkXIhK5FHgd3re6eDCl-pSdfbpi3JH2DWvvQAMqs1Mi/exec";
+// O seu link executável limpo e correto
+const URL = "https://script.google.com/macros/s/AKfycbxN1C7uNHvsMhebcT0uiagB3kkXIhK5FHgd3re6eDCl-pSdfbpi3JH2DWvvQAMqs1Mi/exec";
+
 let pos="";
 
 function sel(v,e){
@@ -84,41 +85,56 @@ function sel(v,e){
 
 function prog(){
  let p=0;
- if(nome.value.trim()) p+=25;
- if(turma.value) p+=25;
+ if(document.getElementById('nome').value.trim()) p+=25;
+ if(document.getElementById('turma').value) p+=25;
  if(pos) p+=25;
- if(just.value.trim().length>=80) p+=25;
- fill.style.width=p+'%';
+ if(document.getElementById('just').value.trim().length>=80) p+=25;
+ document.getElementById('fill').style.width=p+'%';
 }
 
-nome.oninput=prog;
-turma.onchange=prog;
-just.oninput=()=>{cnt.innerText=just.value.length;prog();};
+document.getElementById('nome').oninput=prog;
+document.getElementById('turma').onchange=prog;
+document.getElementById('just').oninput=()=>{
+  document.getElementById('cnt').innerText=document.getElementById('just').value.length;
+  prog();
+};
 
 function enviar(){
- if(!nome.value.trim()) return alert('Informe seu nome.');
- if(!turma.value) return alert('Selecione a turma.');
- if(!pos) return alert('Escolha Concordo ou Discordo.');
- if(just.value.trim().length<80) return alert('Escreva ao menos 80 caracteres.');
+ const nomeVal = document.getElementById('nome').value.trim();
+ const turmaVal = document.getElementById('turma').value;
+ const justVal = document.getElementById('just').value.trim();
 
- // Trava o botão para evitar envio duplo
+ if(!nomeVal) return alert('Informe seu nome.');
+ if(!turmaVal) return alert('Selecione a turma.');
+ if(!pos) return alert('Escolha Concordo ou Discordo.');
+ if(justVal.length<80) return alert('Escreva ao menos 80 caracteres.');
+
  const btn = document.getElementById('btnEnviar');
  btn.innerText = "⏳ Gravando dados...";
  btn.disabled = true;
 
- fetch(URL,{
-   method:'POST',
-   mode:'no-cors',
-   headers:{'Content-Type':'text/plain'},
-   body:JSON.stringify({
-      nome:nome.value.trim(),
-      turma:turma.value,
-      posicao:pos,
-      justificativa:just.value.trim()
-   })
- }).finally(()=>{
-   form.style.display='none';
-   ok.style.display='block';
+ // Empacota os dados para enviar via GET
+ const params = new URLSearchParams({
+   nome: nomeVal,
+   turma: turmaVal,
+   posicao: pos,
+   justificativa: justVal
+ });
+
+ const linkCompleto = URL + "?" + params.toString();
+
+ // Dispara a requisição invisível
+ fetch(linkCompleto, {
+   method: 'GET',
+   mode: 'no-cors' // Impede o navegador de bloquear a requisição
+ }).then(() => {
+   // Exibe a tela de sucesso
+   document.getElementById('form').style.display='none';
+   document.getElementById('ok').style.display='block';
+ }).catch(() => {
+   alert("Erro ao conectar. Tente novamente.");
+   btn.innerText = "🚀 Enviar Reflexão";
+   btn.disabled = false;
  });
 }
 </script>
