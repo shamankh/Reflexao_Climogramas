@@ -1,97 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiplica 2026 • Pauta 10</title>
+<style>
+:root{--azul:#1d4f91;--ver:#e53935}
+*{box-sizing:border-box;font-family:Segoe UI,sans-serif}
+body{background:#eef3fa;margin:0;padding:25px;display:flex;justify-content:center}
+.wrap{width:100%;max-width:1000px;background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.15);overflow:hidden}
+.main{padding:35px}
+h1{text-align:center;color:var(--azul)}
+.sub{text-align:center;color:#666}
+.bar{height:14px;background:#ddd;border-radius:20px;overflow:hidden;margin:20px 0}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--azul),var(--ver));transition:.3s}
+label{display:block;margin:15px 0 5px;font-weight:bold;color:var(--azul)}
+input,select,textarea{width:100%;padding:12px;border:2px solid #dbe4f3;border-radius:10px}
+textarea{height:220px}
+.pergunta{background:#eef4ff;padding:18px;border-left:6px solid var(--azul);border-radius:10px;margin:20px 0}
+.cards{display:flex;gap:20px}
+.card{flex:1;padding:25px;border:3px solid #dbe4f3;border-radius:15px;text-align:center;cursor:pointer}
+.card.active.blue{background:#eef6ff;border-color:#1565c0}
+.card.active.red{background:#fff1f1;border-color:#d32f2f}
+.count{text-align:right;color:#666;margin:8px 0}
+button{width:100%;padding:15px;background:var(--azul);color:white;border:none;border-radius:10px;font-size:18px;font-weight:bold;cursor:pointer}
+#ok{display:none;padding:60px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div id="form">
+<div class="main">
+<h1>🎯 Missão de Reflexão</h1>
+<p class="sub">Multiplica 2026 • Pauta 10 • Climograma</p>
+
+<div class="bar"><div class="fill" id="fill"></div></div>
+
+<label>Nome Completo</label>
+<input id="nome">
+
+<label>Turma</label>
+<select id="turma">
+<option value="">Selecione...</option>
+<option>Quinta 17h25</option>
+<option>Sexta 17h00</option>
+</select>
+
+<div class="pergunta">
+Você concorda ou discorda que as dificuldades dos alunos na interpretação de climogramas estão mais relacionadas à metodologia utilizada do que à complexidade do conteúdo? Justifique.
+</div>
+
+<div class="cards">
+<div class="card blue" onclick="sel('Concordo',this)">👍<br><br><b>CONCORDO</b></div>
+<div class="card red" onclick="sel('Discordo',this)">👎<br><br><b>DISCORDO</b></div>
+</div>
+
+<label>Justificativa (mínimo 80 caracteres)</label>
+<textarea id="just"></textarea>
+<div class="count"><span id="cnt">0</span> caracteres</div>
+
+<button id="btnEnviar" onclick="enviar()">🚀 Enviar Reflexão</button>
+</div>
+</div>
+
+<div id="ok">
+<h2>🎉 Resposta enviada!</h2>
+<p>Sua contribuição foi registrada com sucesso.</p>
+</div>
+</div>
+
 <script>
+const scriptURL='https://script.google.com/macros/s/AKfycbx-tdSaimOntliI8qkoUTjo5LTo3ocZSIUxtfoCQBxJIKCMGHoDfrTr9JxqweSaT7o/exec';
+let opiniao='';
 
-const scriptURL = 'https://script.google.com/macros/s/AKfycbx-tdSaimOntliI8qkoUTjo5LTo3ocZSIUxtfoCQBxJIKCMGHoDfrTr9JxqweSaT7o/exec';
-
-let opiniao = "";
-
-function sel(valor, elemento){
-
-    opiniao = valor;
-
-    document.querySelectorAll('.card').forEach(card=>{
-        card.classList.remove('active');
-    });
-
-    elemento.classList.add('active');
-
-    document.getElementById('fill').style.width = '60%';
+function sel(valor,el){
+ opiniao=valor;
+ document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+ el.classList.add('active');
+ document.getElementById('fill').style.width='50%';
 }
 
-document.getElementById('just').addEventListener('input', function(){
-
-    const total = this.value.length;
-
-    document.getElementById('cnt').innerText = total;
-
-    if(total >= 80){
-        document.getElementById('fill').style.width = '100%';
-    }
-
+document.getElementById('just').addEventListener('input',function(){
+ document.getElementById('cnt').textContent=this.value.length;
+ if(this.value.length>=80){document.getElementById('fill').style.width='100%';}
 });
 
 function enviar(){
+ const nome=document.getElementById('nome').value.trim();
+ const turma=document.getElementById('turma').value;
+ const justificativa=document.getElementById('just').value.trim();
 
-    const nome = document.getElementById('nome').value.trim();
-    const turma = document.getElementById('turma').value;
-    const justificativa = document.getElementById('just').value.trim();
+ if(!nome){alert('Informe seu nome.');return;}
+ if(!turma){alert('Selecione a turma.');return;}
+ if(!opiniao){alert('Escolha Concordo ou Discordo.');return;}
+ if(justificativa.length<80){alert('Digite pelo menos 80 caracteres.');return;}
 
-    if(nome === ""){
-        alert("Informe seu nome.");
-        return;
-    }
+ const btn=document.getElementById('btnEnviar');
+ btn.disabled=true;
 
-    if(turma === ""){
-        alert("Selecione a turma.");
-        return;
-    }
+ const dados=new FormData();
+ dados.append('Nome',nome);
+ dados.append('Turma',turma);
+ dados.append('Opinião',opiniao);
+ dados.append('Justificativa',justificativa);
 
-    if(opiniao === ""){
-        alert("Escolha Concordo ou Discordo.");
-        return;
-    }
-
-    if(justificativa.length < 80){
-        alert("A justificativa deve possuir pelo menos 80 caracteres.");
-        return;
-    }
-
-    const btn = document.getElementById('btnEnviar');
-
-    btn.disabled = true;
-    btn.innerHTML = "⏳ Enviando...";
-
-    const dados = new FormData();
-
-    dados.append("Nome", nome);
-    dados.append("Turma", turma);
-    dados.append("Opinião", opiniao);
-    dados.append("Justificativa", justificativa);
-
-    fetch(scriptURL,{
-        method:'POST',
-        body:dados
-    })
-    .then(response => response.text())
-    .then(() => {
-
-        document.getElementById('form').style.display = 'none';
-        document.getElementById('ok').style.display = 'block';
-
-    })
-    .catch(error => {
-
-        console.error(error);
-
-        alert("Erro ao enviar os dados para a planilha.");
-
-        btn.disabled = false;
-        btn.innerHTML = "🚀 Enviar Reflexão";
-
-    });
-
+ fetch(scriptURL,{method:'POST',body:dados})
+ .then(r=>r.text())
+ .then(()=>{
+   document.getElementById('form').style.display='none';
+   document.getElementById('ok').style.display='block';
+ })
+ .catch(err=>{
+   console.error(err);
+   alert('Erro ao enviar.');
+   btn.disabled=false;
+ });
 }
-
 </script>
-
 </body>
 </html>
