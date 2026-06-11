@@ -3,179 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reflexão Multiplica SP</title>
-
+<title>Multiplica SP • Climograma</title>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
-}
-
-body{
-background:url('capamult.png') center center no-repeat;
-background-size:cover;
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
-}
-
-.overlay{
-position:fixed;
-inset:0;
-background:rgba(255,255,255,.55);
-backdrop-filter:blur(4px);
-}
-
-.card{
-position:relative;
-z-index:2;
-width:100%;
-max-width:900px;
-background:rgba(255,255,255,.96);
-border-radius:25px;
-padding:35px;
-box-shadow:0 15px 40px rgba(0,0,0,.2);
-animation:entrada .6s ease;
-}
-
-@keyframes entrada{
-from{
-opacity:0;
-transform:translateY(20px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
-
-h1{
-text-align:center;
-color:#1c4c96;
-margin-bottom:10px;
-}
-
-.subtitulo{
-text-align:center;
-margin-bottom:30px;
-color:#555;
-}
-
-label{
-display:block;
-font-weight:bold;
-margin-bottom:8px;
-color:#1c4c96;
-}
-
-input,
-select,
-textarea{
-width:100%;
-padding:14px;
-border-radius:10px;
-border:2px solid #d8e4f7;
-font-size:16px;
-margin-bottom:18px;
-}
-
-textarea{
-height:240px;
-resize:vertical;
-}
-
-.barra{
-height:18px;
-background:#ddd;
-border-radius:50px;
-overflow:hidden;
-margin-bottom:25px;
-}
-
-.progresso{
-height:100%;
-width:0%;
-background:linear-gradient(90deg,#1c4c96,#e53935);
-transition:.3s;
-}
-
-.contador{
-text-align:right;
-font-size:14px;
-color:#666;
-margin-top:-10px;
-margin-bottom:20px;
-}
-
-.botao{
-width:100%;
-padding:16px;
-border:none;
-border-radius:12px;
-background:#1c4c96;
-color:white;
-font-size:18px;
-font-weight:bold;
-cursor:pointer;
-transition:.3s;
-}
-
-.botao:hover{
-transform:scale(1.02);
-}
-
-#sucesso{
-display:none;
-text-align:center;
-}
-
-#sucesso h2{
-font-size:2rem;
-color:#2e7d32;
-margin-bottom:15px;
-}
-
-#sucesso p{
-font-size:1.1rem;
-}
-
-.pergunta{
-background:#f5f8fd;
-padding:20px;
-border-radius:12px;
-border-left:6px solid #1c4c96;
-margin-bottom:20px;
-line-height:1.6;
-font-size:18px;
-}
-
+:root{--azul:#1d4f91;--ver:#e53935}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,sans-serif}
+body{min-height:100vh;background:url('capamult.png') center/cover no-repeat fixed;display:flex;align-items:center;justify-content:center;padding:24px}
+body:before{content:"";position:fixed;inset:0;background:rgba(255,255,255,.12);backdrop-filter:blur(2px)}
+.wrap{position:relative;z-index:1;width:100%;max-width:1000px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);border-radius:28px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.main{padding:36px}
+h1{text-align:center;color:var(--azul);margin-bottom:8px}
+.sub{text-align:center;color:#555;margin-bottom:24px}
+.bar{height:16px;background:#ddd;border-radius:20px;overflow:hidden;margin-bottom:24px}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--azul),var(--ver));transition:.3s}
+label{display:block;margin:10px 0 6px;font-weight:700;color:var(--azul)}
+input,select,textarea{width:100%;padding:14px;border:2px solid #dbe4f3;border-radius:12px}
+textarea{height:220px}
+.pergunta{background:#eef4ff;padding:18px;border-left:6px solid var(--azul);border-radius:12px;margin:18px 0}
+.cards{display:flex;gap:18px;margin:18px 0}
+.card{flex:1;padding:22px;background:#fff;border:3px solid #dbe4f3;border-radius:16px;cursor:pointer}
+.card.active.blue{border-color:#1565c0;background:#eef6ff}
+.card.active.red{border-color:#d32f2f;background:#fff1f1}
+.count{text-align:right;color:#666;margin:8px 0 18px}
+button{width:100%;padding:16px;border:none;border-radius:12px;background:var(--azul);color:#fff;font-weight:700;font-size:18px;cursor:pointer}
+.footer{text-align:center;padding:18px;border-top:1px solid #ddd;color:var(--azul);font-weight:600;line-height:1.6}
+#ok{display:none;padding:70px;text-align:center}
+@media(max-width:800px){.cards{flex-direction:column}}
 </style>
 </head>
 <body>
-
-<div class="overlay"></div>
-
-<div class="card">
-
-<div id="formulario">
-
+<div class="wrap">
+<div id="form">
+<div class="main">
 <h1>🎯 Missão de Reflexão</h1>
-
-<p class="subtitulo">
-Registre sua análise sobre a questão proposta.
-</p>
-
-<div class="barra">
-<div class="progresso" id="barra"></div>
-</div>
+<p class="sub">Multiplica 2026 • Pauta 10 • Climograma</p>
+<div class="bar"><div id="fill" class="fill"></div></div>
 
 <label>Nome completo</label>
-<input type="text" id="nome">
+<input id="nome">
 
 <label>Turma</label>
 <select id="turma">
@@ -184,108 +48,69 @@ Registre sua análise sobre a questão proposta.
 <option>Sexta 17h00</option>
 </select>
 
-<div class="pergunta">
-Você concorda ou discorda que as dificuldades dos alunos na interpretação de climogramas estão mais relacionadas à metodologia utilizada do que à complexidade do conteúdo? Justifique.
+<div class="pergunta">Você concorda ou discorda que as dificuldades dos alunos na interpretação de climogramas estão mais relacionadas à metodologia utilizada do que à complexidade do conteúdo? Justifique.</div>
+
+<div class="cards">
+<div class="card blue" onclick="sel('Concordo',this)">👍 <b>Concordo</b></div>
+<div class="card red" onclick="sel('Discordo',this)">👎 <b>Discordo</b></div>
 </div>
 
-<label>Sua resposta</label>
-
-<textarea id="resposta" placeholder="Digite sua justificativa aqui..."></textarea>
-
-<div class="contador">
-<span id="contador">0</span> caracteres
+<label>Justificativa</label>
+<textarea id="just"></textarea>
+<div class="count"><span id="cnt">0</span> caracteres</div>
+<button onclick="enviar()">🚀 Enviar Reflexão</button>
+</div>
+<div class="footer">Me. Christopher De Andrade Cardoso<br>Multiplica 2026 • 1º Semestre<br>Pauta 10 • Climograma</div>
 </div>
 
-<button class="botao" onclick="enviarResposta()">
-🚀 Enviar Reflexão
-</button>
-
-</div>
-
-<div id="sucesso">
-
+<div id="ok">
 <h2>🎉 Resposta enviada!</h2>
-
-<p>
-Sua contribuição foi registrada com sucesso.<br><br>
-Obrigado pela participação.
-</p>
-
+<p>Sua contribuição foi registrada com sucesso.</p>
 </div>
-
 </div>
 
 <script>
-
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwLMPl4erZbFM-Dz8oAlIiumBr-SyAwvX_3f3qWCO99cPe_wn7GB6UT3PA1lGFHmLef/exec";
-
-const texto = document.getElementById("resposta");
-
-texto.addEventListener("input",()=>{
-
-const qtd = texto.value.length;
-
-document.getElementById("contador").innerText=qtd;
-
-const progresso=Math.min((qtd/300)*100,100);
-
-document.getElementById("barra").style.width=progresso+"%";
-
-});
-
-function enviarResposta(){
-
-const nome=document.getElementById("nome").value.trim();
-const turma=document.getElementById("turma").value;
-const resposta=document.getElementById("resposta").value.trim();
-
-if(nome===""){
-alert("Digite seu nome.");
-return;
+const URL="https://script.google.com/macros/s/AKfycbyWwJQiToOpdEq4D8XkOZWkbc4UbFsR_nfSgYTziKNHA1JdW6G3s9Z4JoxeEePASKu4/exec";
+let pos="";
+function sel(v,e){
+ pos=v;
+ document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+ e.classList.add('active');
+ prog();
 }
-
-if(turma===""){
-alert("Selecione sua turma.");
-return;
+function prog(){
+ let p=0;
+ if(nome.value.trim()) p+=25;
+ if(turma.value) p+=25;
+ if(pos) p+=25;
+ if(just.value.trim().length>=80) p+=25;
+ fill.style.width=p+'%';
 }
+nome.oninput=prog;
+turma.onchange=prog;
+just.oninput=()=>{cnt.innerText=just.value.length;prog();};
 
-if(resposta.length<80){
-alert("Escreva uma justificativa mais completa.");
-return;
+function enviar(){
+ if(!nome.value.trim()) return alert('Informe seu nome.');
+ if(!turma.value) return alert('Selecione a turma.');
+ if(!pos) return alert('Escolha Concordo ou Discordo.');
+ if(just.value.trim().length<80) return alert('Escreva ao menos 80 caracteres.');
+
+ fetch(URL,{
+   method:'POST',
+   mode:'no-cors',
+   headers:{'Content-Type':'text/plain'},
+   body:JSON.stringify({
+      nome:nome.value.trim(),
+      turma:turma.value,
+      posicao:pos,
+      justificativa:just.value.trim()
+   })
+ }).finally(()=>{
+   form.style.display='none';
+   ok.style.display='block';
+ });
 }
-
-const dados={
-nome:nome,
-turma:turma,
-resposta:resposta
-};
-
-fetch(SCRIPT_URL,{
-method:"POST",
-mode:"no-cors",
-headers:{
-"Content-Type":"text/plain"
-},
-body:JSON.stringify(dados)
-})
-.then(()=>{
-mostrarSucesso();
-})
-.catch(()=>{
-mostrarSucesso();
-});
-
-}
-
-function mostrarSucesso(){
-
-document.getElementById("formulario").style.display="none";
-document.getElementById("sucesso").style.display="block";
-
-}
-
 </script>
-
 </body>
 </html>
