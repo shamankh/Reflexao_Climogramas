@@ -17,14 +17,15 @@ h1{text-align:center;color:var(--azul);margin-bottom:8px}
 .fill{height:100%;width:0;background:linear-gradient(90deg,var(--azul),var(--ver));transition:.3s}
 label{display:block;margin:10px 0 6px;font-weight:700;color:var(--azul)}
 input,select,textarea{width:100%;padding:14px;border:2px solid #dbe4f3;border-radius:12px}
-textarea{height:220px}
+textarea{height:220px;resize:vertical}
 .pergunta{background:#eef4ff;padding:18px;border-left:6px solid var(--azul);border-radius:12px;margin:18px 0}
 .cards{display:flex;gap:18px;margin:18px 0}
-.card{flex:1;padding:22px;background:#fff;border:3px solid #dbe4f3;border-radius:16px;cursor:pointer}
+.card{flex:1;padding:22px;background:#fff;border:3px solid #dbe4f3;border-radius:16px;cursor:pointer;text-align:center;font-size:18px}
 .card.active.blue{border-color:#1565c0;background:#eef6ff}
 .card.active.red{border-color:#d32f2f;background:#fff1f1}
 .count{text-align:right;color:#666;margin:8px 0 18px}
-button{width:100%;padding:16px;border:none;border-radius:12px;background:var(--azul);color:#fff;font-weight:700;font-size:18px;cursor:pointer}
+button{width:100%;padding:16px;border:none;border-radius:12px;background:var(--azul);color:#fff;font-weight:700;font-size:18px;cursor:pointer;transition:0.3s}
+button:disabled{background:#888;cursor:not-allowed}
 .footer{text-align:center;padding:18px;border-top:1px solid #ddd;color:var(--azul);font-weight:600;line-height:1.6}
 #ok{display:none;padding:70px;text-align:center}
 @media(max-width:800px){.cards{flex-direction:column}}
@@ -58,9 +59,9 @@ button{width:100%;padding:16px;border:none;border-radius:12px;background:var(--a
 <label>Justificativa</label>
 <textarea id="just"></textarea>
 <div class="count"><span id="cnt">0</span> caracteres</div>
-<button onclick="enviar()">🚀 Enviar Reflexão</button>
+<button id="btnEnviar" onclick="enviar()">🚀 Enviar Reflexão</button>
 </div>
-<div class="footer">Me. Christopher De Andrade Cardoso<br>Multiplica 2026 • 1º Semestre<br>Pauta 10 • Climograma</div>
+<div class="footer">Prof. Me. Christopher De Andrade Cardoso<br>Multiplica 2026 • 1º Semestre<br>Pauta 10 • Climograma</div>
 </div>
 
 <div id="ok">
@@ -70,14 +71,17 @@ button{width:100%;padding:16px;border:none;border-radius:12px;background:var(--a
 </div>
 
 <script>
-const URL="https://script.google.com/macros/s/AKfycbyWwJQiToOpdEq4D8XkOZWkbc4UbFsR_nfSgYTziKNHA1JdW6G3s9Z4JoxeEePASKu4/exec";
+// Link corrigido para /exec no final
+const URL="https://script.google.com/macros/s/AKfycby7dMZH2g4jps8AnTskuYFhbo7K0WlzcLI02b7rAaQ/exec";
 let pos="";
+
 function sel(v,e){
  pos=v;
  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
  e.classList.add('active');
  prog();
 }
+
 function prog(){
  let p=0;
  if(nome.value.trim()) p+=25;
@@ -86,6 +90,7 @@ function prog(){
  if(just.value.trim().length>=80) p+=25;
  fill.style.width=p+'%';
 }
+
 nome.oninput=prog;
 turma.onchange=prog;
 just.oninput=()=>{cnt.innerText=just.value.length;prog();};
@@ -95,6 +100,11 @@ function enviar(){
  if(!turma.value) return alert('Selecione a turma.');
  if(!pos) return alert('Escolha Concordo ou Discordo.');
  if(just.value.trim().length<80) return alert('Escreva ao menos 80 caracteres.');
+
+ // Trava o botão para evitar envio duplo
+ const btn = document.getElementById('btnEnviar');
+ btn.innerText = "⏳ Gravando dados...";
+ btn.disabled = true;
 
  fetch(URL,{
    method:'POST',
